@@ -1,7 +1,7 @@
 # 📊 Git Monitor
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/gaugustog/git-monitor/releases)
+[![Version](https://img.shields.io/badge/version-1.0.1-blue.svg)](https://github.com/gaugustog/git-monitor/releases)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
 A real-time Git repository monitor for your terminal - like `htop` for Git! Perfect for monitoring changes made by automated tools like Claude Code or tracking team activity.
