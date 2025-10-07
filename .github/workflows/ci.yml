@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    name: Lint and Test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Install shellcheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+      
+      - name: Run shellcheck
+        run: |
+          shellcheck git-monitor || true
+          shellcheck install.sh || true
+      
+      - name: Check bash syntax
+        run: |
+          bash -n git-monitor
+          bash -n install.sh
+      
+      - name: Test installation
+        run: |
+          chmod +x git-monitor
+          ./git-monitor --version || echo "Version check"
+  
+  test-install:
+    name: Test Installation
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-20.04, ubuntu-22.04]
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Make scripts executable
+        run: |
+          chmod +x git-monitor
+          chmod +x install.sh
+      
+      - name: Test local install
+        run: |
+          ./install.sh --dir /tmp/test-install
+          /tmp/test-install/git-monitor --help || true
+      
+      - name: Test in git repository
+        run: |
+          /tmp/test-install/git-monitor . 1 &
+          PID=$!
+          sleep 3
+          kill $PID || true

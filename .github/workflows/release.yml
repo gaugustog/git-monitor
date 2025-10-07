@@ -1,0 +1,112 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+      
+      - name: Run tests
+        run: make test
+      
+      - name: Check script
+        run: bash -n git-monitor
+
+  release:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Get version
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+      
+      - name: Create release archive
+        run: |
+          make release VERSION=${{ steps.version.outputs.VERSION }}
+          
+      - name: Build Debian package
+        run: |
+          make deb VERSION=${{ steps.version.outputs.VERSION }}
+      
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ steps.version.outputs.VERSION }}
+          draft: false
+          prerelease: false
+          body: |
+            ## 🚀 Git Monitor ${{ steps.version.outputs.VERSION }}
+            
+            ### Installation
+            
+            #### Quick install:
+            ```bash
+            curl -sSL https://github.com/gaugustog/git-monitor/releases/download/${{ steps.version.outputs.VERSION }}/install.sh | bash
+            ```
+            
+            #### Manual install:
+            ```bash
+            wget https://github.com/gaugustog/git-monitor/releases/download/${{ steps.version.outputs.VERSION }}/git-monitor-${{ steps.version.outputs.VERSION }}.tar.gz
+            tar -xzf git-monitor-${{ steps.version.outputs.VERSION }}.tar.gz
+            cd git-monitor-${{ steps.version.outputs.VERSION }}
+            sudo make install
+            ```
+            
+            #### Debian/Ubuntu:
+            ```bash
+            wget https://github.com/gaugustog/git-monitor/releases/download/${{ steps.version.outputs.VERSION }}/git-monitor_${{ steps.version.outputs.VERSION }}_all.deb
+            sudo dpkg -i git-monitor_${{ steps.version.outputs.VERSION }}_all.deb
+            ```
+            
+            ### What's New
+            See [CHANGELOG.md](https://github.com/gaugustog/git-monitor/blob/main/CHANGELOG.md) for details.
+      
+      - name: Upload Release Asset - Tarball
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./git-monitor-${{ steps.version.outputs.VERSION }}.tar.gz
+          asset_name: git-monitor-${{ steps.version.outputs.VERSION }}.tar.gz
+          asset_content_type: application/gzip
+      
+      - name: Upload Release Asset - Debian Package
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./git-monitor_${{ steps.version.outputs.VERSION }}_all.deb
+          asset_name: git-monitor_${{ steps.version.outputs.VERSION }}_all.deb
+          asset_content_type: application/vnd.debian.binary-package
+      
+      - name: Upload Release Asset - Install Script
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./install.sh
+          asset_name: install.sh
+          asset_content_type: text/plain

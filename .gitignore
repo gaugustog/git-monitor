@@ -1,0 +1,33 @@
+# Temporary files
+*.tmp
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build artifacts
+dist/
+*.tar.gz
+*.deb
+*.rpm
+*.zip
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-*
+
+# Test files
+test/
+*.test
+*.log
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Local configuration
+.env
+.env.local
+config.local

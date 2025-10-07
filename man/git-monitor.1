@@ -1,0 +1,40 @@
+.TH GIT-MONITOR 1 "2024" "Version 1.0.0" "User Commands"
+.SH NAME
+git-monitor \- Real-time Git repository monitor
+.SH SYNOPSIS
+.B git-monitor
+[\fIDIRECTORY\fR] [\fIINTERVAL\fR]
+.SH DESCRIPTION
+.B git-monitor
+is a real-time Git repository monitor for your terminal, similar to htop for Git.
+It displays branch information, file changes, and recent commits with auto-refresh.
+.SH OPTIONS
+.TP
+\fIDIRECTORY\fR
+Path to Git repository (default: current directory)
+.TP
+\fIINTERVAL\fR
+Refresh interval in seconds (default: 2)
+.SH KEYBOARD SHORTCUTS
+.TP
+.B q
+Quit
+.TP
+.B r
+Refresh immediately
+.TP
+.B d
+Toggle diff preview
+.TP
+.B +
+Increase refresh interval
+.TP
+.B -
+Decrease refresh interval
+.SH AUTHOR
+Written by Gabriel Augusto Gonçalves.
+.SH REPORTING BUGS
+Report bugs to: https://github.com/gaugustog/git-monitor/issues
+.SH COPYRIGHT
+Copyright (C) 2024 Gabriel Augusto Gonçalves.
+License MIT: https://opensource.org/licenses/MIT

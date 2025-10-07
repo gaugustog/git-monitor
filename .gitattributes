@@ -1,0 +1,26 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Shell scripts should always use LF
+*.sh text eol=lf
+git-monitor text eol=lf
+
+# Bash files
+*.bash text eol=lf
+*.zsh text eol=lf
+
+# Documentation
+*.md text
+*.txt text
+LICENSE text
+README text
+
+# Config files
+Makefile text eol=lf
+.gitignore text
+.gitattributes text
+
+# Binary files
+*.png binary
+*.jpg binary
+*.gif binary
