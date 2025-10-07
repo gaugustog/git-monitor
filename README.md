@@ -6,7 +6,7 @@
 
 A real-time Git repository monitor for your terminal - like `htop` for Git! Perfect for monitoring changes made by automated tools like Claude Code or tracking team activity.
 
-![Git Monitor Demo](https://via.placeholder.com/800x400/0d1117/58a6ff?text=Git+Monitor+Demo)
+![Git Monitor Demo](docs/images/git-monitor-demo.png)
 
 ## ✨ Features
 
