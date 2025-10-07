@@ -7,7 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.0] - 2024-01-XX
+## [1.0.1] - 2024-01-20
+
+### Fixed
+- Fixed detection of staged files (now properly detects both modified and newly added files)
+- Fixed display of binary files (images, videos, documents) in the file list
+- Added file type icons for better visual identification:
+  - 🖼️ Images (jpg, png, gif, svg, etc.)
+  - 🎥 Videos (mp4, avi, mov, etc.)
+  - 📄 Documents (pdf, doc, xls, etc.)
+  - 📦 Archives (zip, tar, gz, etc.)
+
+### Changed
+- Improved file detection regex to include `^A` (added) files in staged count
+- Enhanced untracked files display with automatic file type detection
+
+## [1.0.0] - 2024-01-20
 
 ### Added
 - Initial release of Git Monitor
@@ -45,5 +60,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Author
 - Gabriel Augusto Gonçalves ([@gaugustog](https://github.com/gaugustog))
 
-[Unreleased]: https://github.com/gaugustog/git-monitor/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/gaugustog/git-monitor/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/gaugustog/git-monitor/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/gaugustog/git-monitor/releases/tag/v1.0.0
