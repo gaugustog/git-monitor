@@ -1,7 +1,12 @@
 #!/bin/bash
 
 # Git Repository Monitor - Um monitor estilo htop para repositórios Git
+# Autor: Gabriel Augusto Gonçalves <gabri.augustog@gmail.com>
+# Versão: 1.0.1
 # Uso: ./git-monitor.sh [caminho_do_repositorio] [intervalo_segundos]
+
+# Versão
+VERSION="1.0.1"
 
 # Cores ANSI
 RED='\033[0;31m'
@@ -17,6 +22,40 @@ BOLD='\033[1m'
 
 # Configurações padrão
 REPO_PATH="${1:-.}"
+
+# Verificar argumentos especiais
+if [ "$1" == "--version" ] || [ "$1" == "-v" ]; then
+    echo "git-monitor version $VERSION"
+    echo "Copyright (c) 2024 Gabriel Augusto Gonçalves"
+    echo "License: MIT"
+    exit 0
+fi
+
+if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
+    echo "Git Monitor v$VERSION - Real-time Git repository monitor"
+    echo ""
+    echo "Usage: git-monitor [REPOSITORY] [INTERVAL]"
+    echo ""
+    echo "Arguments:"
+    echo "  REPOSITORY  Path to git repository (default: current directory)"
+    echo "  INTERVAL    Refresh interval in seconds (default: 2)"
+    echo ""
+    echo "Options:"
+    echo "  -h, --help     Show this help message"
+    echo "  -v, --version  Show version information"
+    echo ""
+    echo "Keyboard shortcuts:"
+    echo "  q    Quit"
+    echo "  r    Refresh immediately"
+    echo "  d    Toggle diff preview"
+    echo "  +    Increase refresh interval"
+    echo "  -    Decrease refresh interval"
+    echo ""
+    echo "Author: Gabriel Augusto Gonçalves <gabri.augustog@gmail.com>"
+    echo "Repository: https://github.com/gaugustog/git-monitor"
+    exit 0
+fi
+
 # Converter para caminho absoluto logo no início
 REPO_PATH=$(realpath "$REPO_PATH" 2>/dev/null || echo "$REPO_PATH")
 REFRESH_INTERVAL="${2:-2}"
@@ -101,7 +140,7 @@ get_repo_info() {
     
     # Status dos arquivos
     MODIFIED_FILES=$(git status --porcelain | grep -c "^ M")
-    STAGED_FILES=$(git status --porcelain | grep -c "^M")
+    STAGED_FILES=$(git status --porcelain | grep -c "^M\|^A")
     UNTRACKED_FILES=$(git status --porcelain | grep -c "^??")
     DELETED_FILES=$(git status --porcelain | grep -c "^ D")
     
@@ -182,7 +221,7 @@ display_changed_files() {
             file=$(echo "$line" | cut -c4-)
             buffer_add "  ${GREEN}[S]${NC} $file\n"
             ((count++))
-        done < <(git status --porcelain | grep "^M")
+        done < <(git status --porcelain | grep "^M\|^A")
     fi
     
     # Arquivos modificados
@@ -200,12 +239,25 @@ display_changed_files() {
         done < <(git status --porcelain | grep "^ M")
     fi
     
-    # Arquivos não rastreados
+    # Arquivos não rastreados - INCLUINDO BINÁRIOS
     if [ "$UNTRACKED_FILES" -gt 0 ]; then
         while IFS= read -r line; do
             [ $count -ge $max_files ] && break
             file=$(echo "$line" | cut -c4-)
-            buffer_add "  ${CYAN}[U]${NC} $file\n"
+            
+            # Detectar tipo de arquivo
+            local file_type=""
+            if [[ $file =~ \.(jpg|jpeg|png|gif|svg|webp|ico|bmp)$ ]]; then
+                file_type=" 🖼️"
+            elif [[ $file =~ \.(mp4|avi|mov|webm|mkv)$ ]]; then
+                file_type=" 🎥"
+            elif [[ $file =~ \.(pdf|doc|docx|xls|xlsx)$ ]]; then
+                file_type=" 📄"
+            elif [[ $file =~ \.(zip|tar|gz|7z|rar)$ ]]; then
+                file_type=" 📦"
+            fi
+            
+            buffer_add "  ${CYAN}[U]${NC} $file$file_type\n"
             ((count++))
         done < <(git status --porcelain | grep "^??")
     fi
